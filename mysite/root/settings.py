@@ -31,9 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'nuchat.apps.NuchatConfig',
-    'polls.apps.PollsConfig',
-    'snippets.apps.SnippetsConfig',
     'inari.apps.InariConfig',
     'spa.apps.SpaConfig',
     'rest_framework',
@@ -56,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mysite.urls'
+ROOT_URLCONF = 'root.urls'
 
 TEMPLATES = [
     {
@@ -74,7 +71,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mysite.wsgi.application'
+WSGI_APPLICATION = 'root.wsgi.application'
 
 
 # Database

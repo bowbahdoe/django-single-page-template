@@ -16,13 +16,9 @@ Including another URLconf
 
 from django.conf.urls import include, url
 from django.contrib import admin
-from snippets.views import snippet_list
 
 urlpatterns = [
-    url(r'^polls/', include('polls.urls')),
-    url(r'^chat/', include('nuchat.urls')),
     url(r'^inari/', include('inari.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^snippets/', include('snippets.urls')),
-    url(r'^spa/', include('spa.urls'))
+    url(r'^', include('spa.urls'))
 ]

@@ -2,5 +2,6 @@ django
 django_rest_framework
 django-rest-swagger
 django_filter
+bs4
 markdown
 pygments

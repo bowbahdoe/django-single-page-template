@@ -26,5 +26,10 @@
 <body>
   <div id="mount"></div>
   <script src="{% static "spa/bundle.js" %}" charset="utf-8"></script>
+  {% if extra_js_scripts %}
+    {% for extra_js in extra_js_scripts %}
+      <script src="{{extra_js}}"></script>
+    {% endfor %}
+  {% endif %}
 </body>
 </html>
