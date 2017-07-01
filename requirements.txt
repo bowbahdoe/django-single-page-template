@@ -1,7 +1,9 @@
 django
-django_rest_framework
+djangorestframework
 django-rest-swagger
+django-rest-auth
 django_filter
+django-debug-toolbar
 bs4
 markdown
 pygments
