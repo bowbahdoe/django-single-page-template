@@ -31,12 +31,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'inari.apps.InariConfig',
     'spa.apps.SpaConfig',
+    'inari.apps.InariConfig',
     'rest_framework',
     'rest_framework_swagger',
     'rest_framework.authtoken',
     'rest_auth',
+    'webpack_loader',
     'debug_toolbar',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -125,8 +126,17 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
-if DEBUG:
-    INTERNAL_IPS = ['127.0.0.1']
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'), # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
+)
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 

@@ -21,6 +21,7 @@ def get_user_preload_data(request):
         return {"first_name" : user.first_name,
                 "last_name" : user.last_name,
                 "username" : user.get_username(),
-                "logged_in" : True}
+                "logged_in" :  True,
+                "last_login" : user.last_login.isoformat() }
     else:
         return {"logged_in" : False}

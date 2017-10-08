@@ -1,4 +1,4 @@
-{% load static %}
+{% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,14 +25,14 @@
 </head>
 <body>
   <div id="mount"></div>
-  <script src="{% static "spa/bundle.js" %}" charset="utf-8"></script>
+  {% render_bundle 'bundle' %}
 
   {% if extra_js_scripts %}
     {% for extra_js in extra_js_scripts %}
       <script src="{{extra_js}}"></script>
     {% endfor %}
   {% endif %}
-  
+
   {% if extra_inline_js %}
     {% for extra_js in extra_inline_js %}
       <script>{{extra_js | safe}}</script>

@@ -1,8 +1,6 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from . import views
-from rest_framework_swagger.views import get_swagger_view
-from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 
 router = routers.DefaultRouter()
 router.register(r'antibiotics', views.AntibioticsViewSet)
@@ -14,11 +12,20 @@ router.register(r'shelves', views.ShelvesViewSet)
 router.register(r'racks', views.RacksViewSet)
 router.register(r'plasmids', views.PlasmidsViewSet)
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework.decorators import authentication_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
-
-schema_view = get_swagger_view(title='InariDB API')
+@api_view(['GET', 'POST'])
+@authentication_classes((SessionAuthentication, BasicAuthentication))
+def hello_world(request):
+    if request.method == 'POST':
+        return Response({"message": "Got some data!", "data": request.data})
+    return Response({"message": "Hello, world!"})
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
-    url(r'^docs/', schema_view)
+    url(r'^whynot/', hello_world)
 ]
