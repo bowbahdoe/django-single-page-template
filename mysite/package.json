@@ -7,13 +7,16 @@
     "babel-preset-react": "^6.24.1",
     "bulma": "^0.5.1",
     "css-loader": "^0.28.4",
+    "google-closure-library": "^20170910.0.0",
     "node-sass": "^4.5.3",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-onclickoutside": "^6.5.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
-    "webpack": "^3.5.5"
+    "swagger-client": "^3.2.1",
+    "webpack": "^3.5.5",
+    "webpack-bundle-tracker": "^0.2.0"
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.24.1",

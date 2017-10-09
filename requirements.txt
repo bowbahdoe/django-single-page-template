@@ -6,8 +6,5 @@ django-webpack-loader
 django-allauth
 django_filter
 django-debug-toolbar
-channels
-channels_api
 bs4
 markdown
-pygments
