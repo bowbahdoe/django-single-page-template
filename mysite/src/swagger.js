@@ -1,27 +1,56 @@
+'use strict'
+/*
+This module contains all the code required for working with the swagger backend
+*/
 const Swagger = require('swagger-client')
 const cookie = require('cookie')
+const _ = require('lodash')
 
 export
 const CSRFTOKEN = cookie.parse(document.cookie).csrftoken
 
+const SPEC_URL =
+ `${window.location.protocol}//${window.location.host}/docs?format=openapi`
+
+/**
+returns if the given httpMethod should send a csrftoken with the request
+*/
+function shouldSendCSRF(httpMethod) {
+  return !(['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(httpMethod))
+}
+
+/**
+Mutates req to have an X-CSRFToken header with a value of csrftoken if the
+method of req is an unsafe http method
+*/
+function attachCSRF(req, csrftoken) {
+  if(shouldSendCSRF(req.method)) {
+    req.headers['X-CSRFToken'] = csrftoken
+  }
+  return req
+}
+
+/**
+returns a swagger client using the given swagger_spec that properly handles
+passing a csrftoken
+*/
+async function makeSwaggerClient(swagger_spec, csrftoken) {
+  return Swagger({
+    url: `data:application/json,${swagger_spec}`,
+    requestInterceptor: req => attachCSRF(req, csrftoken)
+  })
+}
+
+/**
+returns a Swagger client given the url for its spec and a csrftoken to attach
+to unsafe requests
+*/
+async function getClientFromSpec(spec_url, csrftoken) {
+  let res = await fetch(spec_url)
+  let json = await res.json()
+  let spec = JSON.stringify(json)
+  return makeSwaggerClient(spec, csrftoken)
+}
+
 export
-let getClient = (function() {
-    var client = null;
-    return async () => {
-      if(client === null) {
-        let {host, protocol} = window.location
-        let url = `${protocol}//${host}/docs?format=openapi`
-        let res = await fetch(url)
-        let json = await res.json()
-        let spec = JSON.stringify(json)
-        client = await Swagger({
-          url: `data:application/json,${spec}`,
-          requestInterceptor: (req) => {
-            req.headers['X-CSRFToken'] = CSRFTOKEN
-            return req
-          }
-        })
-      }
-      return client
-    }
-  })();
+const getClient = _.memoize(async () => getClientFromSpec(SPEC_URL, CSRFTOKEN))
