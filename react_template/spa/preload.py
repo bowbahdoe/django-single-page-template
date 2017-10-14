@@ -1,3 +1,5 @@
+from django.urls import reverse
+
 def get_preload_data(request):
     '''
     given a request returns a dictionary of data that should
@@ -8,8 +10,15 @@ def get_preload_data(request):
 
     preload = {}
     preload['user_info'] = get_user_preload_data(request)
+    preload['swagger_url'] = get_docs_url()
 
     return preload
+
+def get_docs_url():
+    '''
+    Returns the url to the swagger spec
+    '''
+    return reverse('swagger-documentation') + '?format=openapi'
 
 def get_user_preload_data(request):
     '''

@@ -103,3 +103,6 @@ ENV/
 node_modules/
 
 bundle-*.js
+
+# Pycharm
+.idea/

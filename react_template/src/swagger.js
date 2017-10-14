@@ -6,11 +6,15 @@ const Swagger = require('swagger-client')
 const cookie = require('cookie')
 const _ = require('lodash')
 
-export
 const CSRFTOKEN = cookie.parse(document.cookie).csrftoken
 
-const SPEC_URL =
- `${window.location.protocol}//${window.location.host}/docs?format=openapi`
+const SPEC_URL = buildSpecUrl();
+
+function buildSpecUrl() {
+  let {protocol, host} = window.location
+  let url = window.PRELOAD.swagger_url || '/docs?format=openapi'
+  return `${protocol}//${host}${url}`
+}
 
 /**
 returns if the given httpMethod should send a csrftoken with the request

@@ -20,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# Replace this during production
 SECRET_KEY = 'kti$m3m@69gp$%8_v-j)&vrua#x78*m=&_s+&!b2o*39jt19l5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -32,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'spa.apps.SpaConfig',
+    'rest_app.apps.RestAppConfig',
     'inari.apps.InariConfig',
     'rest_framework',
     'rest_framework_swagger',
@@ -126,6 +128,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
 
+# Webpack Configuration
+# http://owaislone.org/blog/webpack-plus-reactjs-and-django/
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'assets'), # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
 )
