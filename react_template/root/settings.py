@@ -34,7 +34,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'spa.apps.SpaConfig',
     'rest_app.apps.RestAppConfig',
-    'inari.apps.InariConfig',
     'rest_framework',
     'rest_framework_swagger',
     'rest_framework.authtoken',

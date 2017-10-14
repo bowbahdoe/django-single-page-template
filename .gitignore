@@ -106,3 +106,5 @@ bundle-*.js
 
 # Pycharm
 .idea/
+
+*.sqlite3
