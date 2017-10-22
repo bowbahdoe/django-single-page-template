@@ -1,9 +1,12 @@
-let swagger = require('./swagger')
+import { getClient } from './swagger'
+import { STATE } from './model'
 
-let clientTest = async () => {
-  let client = await swagger.getClient()
-  console.log(client)
-  console.log(await client.apis.rest.list())
+function increment_counter(state) {
+  return state.update('count', n => n + 1)
 }
 
-clientTest()
+console.log(STATE.deref().toJS())
+
+STATE.swap(increment_counter)
+
+console.log(STATE.deref().toJS())

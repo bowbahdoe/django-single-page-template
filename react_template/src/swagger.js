@@ -2,14 +2,17 @@
 /*
 This module contains all the code required for working with the swagger backend
 */
-const Swagger = require('swagger-client')
-const cookie = require('cookie')
-const _ = require('lodash')
+import Swagger from 'swagger-client'
+import cookie from 'cookie'
+import {memoize} from 'lodash'
 
 const CSRFTOKEN = cookie.parse(document.cookie).csrftoken
-
 const SPEC_URL = buildSpecUrl();
 
+/**
+returns url that the spec is stored at. Loads from window.PRELOAD.swagger_url
+defaults to /docs?format=openapi
+*/
 function buildSpecUrl() {
   let {protocol, host} = window.location
   let url = window.PRELOAD.swagger_url || '/docs?format=openapi'
@@ -28,7 +31,7 @@ Mutates req to have an X-CSRFToken header with a value of csrftoken if the
 method of req is an unsafe http method
 */
 function attachCSRF(req, csrftoken) {
-  if(shouldSendCSRF(req.method)) {
+  if (shouldSendCSRF(req.method)) {
     req.headers['X-CSRFToken'] = csrftoken
   }
   return req
@@ -56,5 +59,5 @@ async function getClientFromSpec(spec_url, csrftoken) {
   return makeSwaggerClient(spec, csrftoken)
 }
 
-export
-const getClient = _.memoize(async () => getClientFromSpec(SPEC_URL, CSRFTOKEN))
+export const getClient =
+  memoize(async () => getClientFromSpec(SPEC_URL, CSRFTOKEN))
