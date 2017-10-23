@@ -11,12 +11,14 @@ const subscribe = STATE.subscribe.bind(STATE)
 const dispatch = STATE.dispatch.bind(STATE)
 
 import { getClient } from './swagger'
+// Prefetch client spec
+setTimeout(getClient,1000);
 
 reg_sub('message', s => s)
 reg_event('replace message', (s, new_msg) => new_msg)
 
 async function getHelloMessage(event) {
-    let c = await getClient
+    let c = await getClient()
     let val = await c.apis.rest.list()
     dispatch('replace message', val.body)
 }
