@@ -1,4 +1,5 @@
 import * as Immutable from 'immutable'
+import { memoize } from 'lodash'
 import { Component } from 'preact'
 import { Atom } from './atom'
 import { ValueError } from './exceptions'
@@ -9,6 +10,10 @@ interface INotifiable {
 
 interface IStateFunction<T> {
   (state: T, ...args: any[]): T
+}
+
+interface ISubscriptionFunction<T> {
+  (state: T, ...args: any[]): any
 }
 
 interface IStore<T> {
@@ -90,10 +95,11 @@ class GlobalStore<T> implements IStore<T> {
   /**
    * Registers the given function to be used for the generation of the
    * value for the subscription. Silently overrides any other function
-   * that was set for the subscription.
+   * that was set for the subscription. This function must be PURE
+   * otherwise it will not behave correctly
    */
-  public reg_sub(sub_name: string, fn: IStateFunction<T>) {
-    this.subscription_table.set(sub_name, fn)
+  public reg_sub(sub_name: string, fn: ISubscriptionFunction<T>) {
+    this.subscription_table.set(sub_name, memoize(fn))
   }
 
   private currentSubscriptionValue(sub_name: string, ...args: any[]) {
@@ -138,25 +144,27 @@ class GlobalStore<T> implements IStore<T> {
 }
 
 export class ReactGlobalStore<T> extends GlobalStore<T> {
-  notifiable_comps: Map<Component<any,any>, INotifiable>
+  private notifiable_comps: Map<Component<any,any>, INotifiable>
+
   constructor(initial_state: T) {
     super(initial_state)
     this.notifiable_comps = new Map()
   }
+
   public subscribe(caller: Component<any, any> | INotifiable, val: string, ...args: any[]) {
     if(caller instanceof Component) {
-      let comp = caller;
-      let n = this.notifiable_comps.get(comp)
-      if(n === undefined) {
-        n =  {notify: () => {
-          comp.forceUpdate()
-        }}
-        this.notifiable_comps.set(comp, n)
-      }
-      caller = n
+      caller = this.notifiableForComponent(caller)
     }
 
     return super.subscribe(caller, val, ...args)
   }
 
+  private notifiableForComponent(comp: Component<any, any>) : INotifiable {
+    let notifiable = this.notifiable_comps.get(comp)
+    if(notifiable === undefined) {
+      notifiable =  {notify: () => { comp.forceUpdate() }}
+      this.notifiable_comps.set(comp, notifiable)
+    }
+    return notifiable
+  }
 }
