@@ -3,13 +3,13 @@
     "closure-library.ts": "^1.0.0",
     "closure-loader": "^0.4.0",
     "google-closure-library": "^20170910.0.0",
-    "immutable": "^3.8.2",
     "preact": "^8.2.5",
     "react": "^15.5.4",
     "react-dom": "^15.6.2",
     "react-onclickoutside": "^6.5.0",
     "redux": "^3.7.2",
-    "swagger-client": "^3.2.1"
+    "swagger-client": "^3.2.1",
+    "webpack-closure-compiler": "^2.1.5"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",

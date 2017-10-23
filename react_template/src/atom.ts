@@ -2,15 +2,15 @@
  * Emulates ClojureScript atoms in a simplistic way
  */
 
-import Immutable from 'immutable'
+import * as Immutable from 'immutable'
 
 import { IllegalArgumentException } from './exceptions'
 
-interface IWatcherFn<T> {
+export interface IWatcherFn<T> {
   (key: string, old_val: T, new_val: T): void
 }
 
-interface IValidationFn<T> {
+export interface IValidationFn<T> {
   (val: T): boolean
 }
 
@@ -59,7 +59,7 @@ export class Atom<T> {
         )
       }
 
-      if(this.compare(old_val, this.value)) {
+      if(Immutable.is(old_val, this.value)) {
         this.value = new_val
         this.call_watchers(old_val, this.value)
         break;
@@ -131,17 +131,5 @@ export class Atom<T> {
     for(let {0: key, 1: watcher} of this.watchers) {
       watcher(key, old_val, new_val)
     }
-  }
-
-  /**
-   * private compare - compares the two values with fallbacks to ImmutableJS
-   * comparisons
-   *
-   * @param  {T} x: T the first value to compare
-   * @param  {T} y: T the second value to compare
-   * @return {boolean}  whether those values are equal
-   */
-  private compare(x: T, y: T): boolean {
-    return x === y || Immutable.is(x, y)
   }
 }
