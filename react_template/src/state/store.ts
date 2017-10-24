@@ -3,8 +3,8 @@ import { memoize } from 'lodash'
 import { Atom } from './atom'
 import { ValueError } from '../exceptions'
 
-export interface INotifiable {
-  notify(): void
+export interface INotifiable<T> {
+  notify(sub_name: string, old_val: T, new_val: T): void
 }
 
 interface IStateFunction<T> {
@@ -16,7 +16,7 @@ interface ISubscriptionFunction<T> {
 }
 
 export interface IStore<T> {
-  subscribe(caller: INotifiable, sub_name: string, ...args: any[]);
+  subscribe(caller: INotifiable<T>, sub_name: string, ...args: any[]);
   dispatch(event: string, ...args: any[]);
   reg_event(event_name: string, fn: IStateFunction<T>);
   reg_sub(sub_name: string, fn: IStateFunction<T>)
@@ -44,7 +44,7 @@ export class GlobalStore<T> implements IStore<T> {
    * Table of subscription names to another table of INotifiables mapped to
    * the arguments that they pass to the subscription function
    */
-  private subscribers: Map<string, Map<INotifiable, any[]>>;
+  private subscribers: Map<string, Map<INotifiable<T>, any[]>>;
 
   constructor(initial_state: T) {
     this.one_true_atom = new Atom(initial_state)
@@ -60,7 +60,7 @@ export class GlobalStore<T> implements IStore<T> {
    * Subscribes the given INotifiable to the subscription given by val and
    * passes the given ...args to the subscription fn
    */
-  public subscribe(caller: INotifiable, sub_name: string, ...args: any[]) {
+  public subscribe(caller: INotifiable<T>, sub_name: string, ...args: any[]) {
     let subs = this.subscribers.get(sub_name)
     if(subs === undefined) {
       subs = new Map()
@@ -128,17 +128,9 @@ export class GlobalStore<T> implements IStore<T> {
 
       if(!Immutable.is(new_sub_val, old_sub_val)) {
         for(let {0: notifiable} of subscribers) {
-          this.notify_of_change(notifiable)
+          notifiable.notify(sub_name, old_sub_val, new_sub_val)
         }
       }
     }
-  }
-
-  /**
-   * Notifies the given INotifiable that a change in the subscription it depends
-   * on has occured
-   */
-  private notify_of_change(reciever: INotifiable) {
-    reciever.notify()
   }
 }
