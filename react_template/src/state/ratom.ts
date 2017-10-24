@@ -1,4 +1,4 @@
-import { Atom, IWatcherFn, IValidationFn} from './atom'
+import { Atom, IWatcherFn, IValidationFn } from './atom'
 import { Component } from 'preact'
 import * as Immutable from 'immutable'
 
@@ -24,6 +24,11 @@ export class RAtom<T> extends Atom<T> {
     this.components.add(component)
   }
 
+
+  /**
+   * Gets the current value of the RAtom. If ref is passed, it will call
+   * forceUpdate on that Component whenever the state changes 
+   */
   public deref(ref?: Component<any, any>) {
     if(ref) {
       this.register(ref);

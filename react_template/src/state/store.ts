@@ -1,10 +1,9 @@
 import * as Immutable from 'immutable'
 import { memoize } from 'lodash'
-import { Component } from 'preact'
 import { Atom } from './atom'
-import { ValueError } from './exceptions'
+import { ValueError } from '../exceptions'
 
-interface INotifiable {
+export interface INotifiable {
   notify(): void
 }
 
@@ -16,14 +15,14 @@ interface ISubscriptionFunction<T> {
   (state: T, ...args: any[]): any
 }
 
-interface IStore<T> {
+export interface IStore<T> {
   subscribe(caller: INotifiable, sub_name: string, ...args: any[]);
   dispatch(event: string, ...args: any[]);
   reg_event(event_name: string, fn: IStateFunction<T>);
   reg_sub(sub_name: string, fn: IStateFunction<T>)
 }
 
-class GlobalStore<T> implements IStore<T> {
+export class GlobalStore<T> implements IStore<T> {
   /**
    * One true source of state for the app
    */
@@ -70,7 +69,6 @@ class GlobalStore<T> implements IStore<T> {
     subs.set(caller, args)
 
     return this.currentSubscriptionValue(sub_name, ...args)
-
   }
 
   /**
@@ -86,7 +84,9 @@ class GlobalStore<T> implements IStore<T> {
 
   /**
    * Registers the given function to be used when the given event is
-   * dispatched for generating the new state value
+   * dispatched for generating the new state value. Silently overrides
+   * any other function that was set for the subscription. This function
+   * must be PURE otherwise it will not behave correctly
    */
   public reg_event(event_name: string, fn: IStateFunction<T>) {
     this.dispatch_table.set(event_name, fn)
@@ -140,31 +140,5 @@ class GlobalStore<T> implements IStore<T> {
    */
   private notify_of_change(reciever: INotifiable) {
     reciever.notify()
-  }
-}
-
-export class ReactGlobalStore<T> extends GlobalStore<T> {
-  private notifiable_comps: Map<Component<any,any>, INotifiable>
-
-  constructor(initial_state: T) {
-    super(initial_state)
-    this.notifiable_comps = new Map()
-  }
-
-  public subscribe(caller: Component<any, any> | INotifiable, val: string, ...args: any[]) {
-    if(caller instanceof Component) {
-      caller = this.notifiableForComponent(caller)
-    }
-
-    return super.subscribe(caller, val, ...args)
-  }
-
-  private notifiableForComponent(comp: Component<any, any>) : INotifiable {
-    let notifiable = this.notifiable_comps.get(comp)
-    if(notifiable === undefined) {
-      notifiable =  {notify: () => { comp.forceUpdate() }}
-      this.notifiable_comps.set(comp, notifiable)
-    }
-    return notifiable
   }
 }

@@ -1,53 +1,49 @@
 import React, { Component } from 'preact'
-import { RAtom } from './ratom'
-import { ReactGlobalStore } from './store'
 import { Exception } from './exceptions'
-import {List} from 'immutable'
+import { RAtom, ReactGlobalStore } from './state'
+import { Map, List } from 'immutable'
 
-const STATE = new ReactGlobalStore(List.of(1,2,3,4))
+const ratom = new RAtom(234123)
+const rstore = new ReactGlobalStore(Map.of("count", 0, "nums", List.of(1)))
 
-const reg_sub = STATE.reg_sub.bind(STATE)
-const reg_event = STATE.reg_event.bind(STATE)
-const subscribe = STATE.subscribe.bind(STATE)
-const dispatch = STATE.dispatch.bind(STATE)
+rstore.reg_sub("count", state => state.get("count"))
+rstore.reg_sub("nums", state => state.get("nums"))
+rstore.reg_sub("max", state => state.get("nums").max())
 
-reg_event('add n', (l, n) => l.map(x => x + n).toList())
-reg_event('append n', (l, n) => l.concat(n))
-reg_sub('max', l => {console.log('c');return l.max()})
-reg_sub('avg', average)
-reg_sub('whole list', l => l)
+rstore.reg_event("inc", state => state.update("count", n => n + 1))
+rstore.reg_event("dec", state => state.update("count", n => n - 1))
+rstore.reg_event("append", (state, x) => state.update("nums", l => l.unshift(x)))
 
-class LogNotifier {
-  notify() {
-    console.log('notified')
+function collatz(n) {
+  if(n % 2 == 0) {
+    return n / 2
   }
-}
-
-subscribe(new LogNotifier, 'avg')
-function average(l) {
-  let sum = 0
-  for(let i of l.toJS()) {
-    sum+=i
+  else {
+    return 3 * n + 1
   }
-  return sum / l.size
 }
 
 class RootComponent extends Component<any, any> {
   render() {
-    let list = subscribe(this, 'whole list').toJS()
     return (
       <div>
-        <p>Max: {subscribe(this, 'max')} </p>
-        <p>Max: {subscribe(this, 'max')} </p>
-        <p>Max: {subscribe(this, 'max')} </p>
-        <p>Avg: {subscribe(this, 'avg')} </p>
-        {list.map(function(n, i){
-          return <p> {n} </p>;
-        })}
-        <button onClick={() => dispatch('add n', 1)}> add one </button>
-        <button onClick={() => dispatch('add n', -1)}> sub one </button>
-        <button onClick={() => dispatch('add n', 2)}> add two </button>
-        <button onClick={() => dispatch('append n', -10)}> append -10 </button>
+        <p>Collatz Conjecture: {ratom.deref(this)}</p>
+        <button onClick={() => ratom.swap(n => collatz(n))}> Hailstone </button>
+
+        <p> Count: {rstore.subscribe(this, "count")} </p>
+        <p> Numbers: {JSON.stringify(rstore.subscribe(this, "nums").toJS())} </p>
+        <p> Max: {(rstore.subscribe(this, "max"))} </p>
+        <button onClick={()=>{rstore.dispatch("inc")}}>
+          Increment
+        </button>
+        <button onClick={()=>{rstore.dispatch("dec")}}>
+          Decrement
+        </button>
+        <button onClick={()=>{
+          rstore.dispatch("append", rstore.subscribe(this, "max") as any + 1)
+        }}>
+          Append 1 + max
+        </button>
       </div>
     )
   }
