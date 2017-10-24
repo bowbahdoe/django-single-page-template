@@ -3,7 +3,7 @@ import { Exception } from './exceptions'
 import { RAtom, ReactGlobalStore } from './state'
 import { Map, List } from 'immutable'
 
-const ratom = new RAtom(234123)
+const ratom = new RAtom(23)
 const rstore = new ReactGlobalStore(Map.of("count", 0, "nums", List.of(1)))
 
 rstore.reg_sub("count", state => state.get("count"))
@@ -12,7 +12,7 @@ rstore.reg_sub("max", state => state.get("nums").max())
 
 rstore.reg_event("inc", state => state.update("count", n => n + 1))
 rstore.reg_event("dec", state => state.update("count", n => n - 1))
-rstore.reg_event("append", (state, x) => state.update("nums", l => l.unshift(x)))
+rstore.reg_event("append", (state, x) => state.update("nums", l => l.unshift(x).sort()))
 
 function collatz(n) {
   if(n % 2 == 0) {
