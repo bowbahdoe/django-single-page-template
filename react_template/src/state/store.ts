@@ -1,4 +1,4 @@
-import * as Immutable from 'immutable'
+import { is } from 'immutable'
 import { memoize } from 'lodash'
 import { Atom } from './atom'
 import { ValueError } from '../exceptions'
@@ -89,7 +89,7 @@ export class GlobalStore<T> implements IStore<T> {
    * must be PURE otherwise it will not behave correctly
    */
   public reg_event(event_name: string, fn: IStateFunction<T>) {
-    this.dispatch_table.set(event_name, fn)
+    this.dispatch_table.set(event_name, memoize(fn))
   }
 
   /**
@@ -126,7 +126,7 @@ export class GlobalStore<T> implements IStore<T> {
       let new_sub_val = sub_fn(new_val)
       let old_sub_val = sub_fn(old_val)
 
-      if(!Immutable.is(new_sub_val, old_sub_val)) {
+      if(!is(new_sub_val, old_sub_val)) {
         for(let {0: notifiable} of subscribers) {
           notifiable.notify(sub_name, old_sub_val, new_sub_val)
         }

@@ -2,7 +2,7 @@
  * Emulates ClojureScript atoms in a simplistic way
  */
 
-import * as Immutable from 'immutable'
+import { is } from 'immutable'
 
 import { IllegalArgumentException } from '../exceptions'
 
@@ -59,7 +59,7 @@ export class Atom<T> {
         )
       }
 
-      if(Immutable.is(old_val, this.value)) {
+      if(is(old_val, this.value)) {
         this.value = new_val
         this.call_watchers(old_val, this.value)
         break;

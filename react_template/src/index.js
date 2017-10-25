@@ -1,4 +1,4 @@
-import { getClient } from './swagger'
-import {render} from './view'
-
+import { render } from './view'
+import './subs.wisp'
+import './events.wisp'
 render()
