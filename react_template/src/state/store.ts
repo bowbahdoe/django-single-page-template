@@ -44,7 +44,7 @@ export class GlobalStore<T> implements IStore<T> {
    * Table of subscription names to another table of INotifiables mapped to
    * the arguments that they pass to the subscription function
    */
-  private subscribers: Map<string, Map<INotifiable<T>, any[]>>;
+  private subscribers: Map<string, Map<INotifiable<T>, Set<any[]>>>;
 
   constructor(initial_state: T) {
     this.one_true_atom = new Atom(initial_state)
@@ -59,6 +59,9 @@ export class GlobalStore<T> implements IStore<T> {
   /**
    * Subscribes the given INotifiable to the subscription given by val and
    * passes the given ...args to the subscription fn
+   *
+   * This subscription is good for one notify. After each notify the INotifiable
+   * needs to resubscribe or it will stop recieving updates
    */
   public subscribe(caller: INotifiable<T>, sub_name: string, ...args: any[]) {
     let subs = this.subscribers.get(sub_name)
@@ -66,7 +69,14 @@ export class GlobalStore<T> implements IStore<T> {
       subs = new Map()
       this.subscribers.set(sub_name, subs)
     }
-    subs.set(caller, args)
+
+    let notifiable_bucket = subs.get(caller)
+    if(notifiable_bucket === undefined) {
+      subs.set(caller, new Set([args]))
+    }
+    else {
+      notifiable_bucket.add(args)
+    }
 
     return this.currentSubscriptionValue(sub_name, ...args)
   }
@@ -115,22 +125,32 @@ export class GlobalStore<T> implements IStore<T> {
    * Notifies all subscribers whenever the value for a subscription changes
    */
   private notify_subscribers(event_name: string, old_val: T, new_val, T): void {
+    let to_notify: any = []
+    let to_clean: Array<Set<any[]>> = []
+
     for(let {0: sub_name, 1: sub_fn} of this.subscription_table) {
       let subscribers = this.subscribers.get(sub_name)
-      // If no subscription function is set or no subscribers
-      // are set for the subscription, simply return
       if(subscribers === undefined) {
-        return;
+        continue;
       }
 
-      let new_sub_val = sub_fn(new_val)
-      let old_sub_val = sub_fn(old_val)
+      for(let {0: notifiable, 1: arg_set} of subscribers) {
+        for(let arg_arr of arg_set) {
+          let old_sub_val = sub_fn(old_val, ...arg_arr)
+          let new_sub_val = sub_fn(new_val, ...arg_arr)
 
-      if(!is(new_sub_val, old_sub_val)) {
-        for(let {0: notifiable} of subscribers) {
-          notifiable.notify(sub_name, old_sub_val, new_sub_val)
+          if(!is(new_sub_val, old_sub_val)) {
+            to_notify.push([notifiable, sub_name, old_val, new_val])
+            to_clean.push(arg_set)
+          }
         }
       }
+    }
+
+    to_clean.forEach(s => s.clear())
+    
+    for(let {0: notifiable, 1: sub_name, 2: old_val, 3: new_val} of to_notify) {
+      notifiable.notify(sub_name, old_val, new_val)
     }
   }
 }

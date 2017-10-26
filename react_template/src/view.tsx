@@ -1,9 +1,7 @@
 import React, { Component } from 'preact'
 import { Exception } from './exceptions'
-
 import { subscribe, dispatch } from './global'
 
-//setInterval(() => {dispatch('increment')}, 1)
 class RootComponent extends Component<any, any> {
   render() {
     return (
