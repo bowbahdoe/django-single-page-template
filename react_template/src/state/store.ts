@@ -148,7 +148,7 @@ export class GlobalStore<T> implements IStore<T> {
     }
 
     to_clean.forEach(s => s.clear())
-    
+
     for(let {0: notifiable, 1: sub_name, 2: old_val, 3: new_val} of to_notify) {
       notifiable.notify(sub_name, old_val, new_val)
     }
