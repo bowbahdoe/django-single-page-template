@@ -108,3 +108,5 @@ bundle-*.js
 .idea/
 
 *.sqlite3
+
+webpack-stats.json
