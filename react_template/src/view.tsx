@@ -1,5 +1,5 @@
 import React, { Component } from 'preact'
-import { Exception } from './exceptions'
+import { Exception } from '@mccue/exceptions'
 import { subscribe, dispatch } from './global'
 
 class RootComponent extends Component<any, any> {

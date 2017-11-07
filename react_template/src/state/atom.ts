@@ -4,7 +4,7 @@
 
 import { is } from 'immutable'
 
-import { IllegalArgumentException } from '../exceptions'
+import { IllegalArgumentException } from '@mccue/exceptions'
 
 export interface IWatcherFn<T> {
   (key: string, old_val: T, new_val: T): void

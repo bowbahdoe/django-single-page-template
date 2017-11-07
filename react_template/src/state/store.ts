@@ -1,7 +1,7 @@
 import { is } from 'immutable'
 import { memoize } from 'lodash'
 import { Atom } from './atom'
-import { ValueError } from '../exceptions'
+import { ValueError } from '@mccue/exceptions'
 
 export interface INotifiable<T> {
   notify(sub_name: string, old_val: T, new_val: T): void
