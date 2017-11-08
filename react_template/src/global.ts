@@ -1,4 +1,4 @@
-import { ReactGlobalStore } from './state'
+import { ReactGlobalStore } from '@mccue/quark'
 import { fromJS } from 'immutable'
 
 const INITIAL_STATE = fromJS({

@@ -1,8 +1,9 @@
-import React, { Component } from 'preact'
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
 import { Exception } from '@mccue/exceptions'
 import { subscribe, dispatch } from './global'
 
-class RootComponent extends Component<any, any> {
+class RootComponent extends Component {
   render() {
     return (
       <div>
@@ -14,10 +15,10 @@ class RootComponent extends Component<any, any> {
   }
 }
 
-export function render(): void {
+export function render() {
   let mount = document.getElementById('mount')
   if(mount !== null) {
-    React.render(<RootComponent />, mount)
+    ReactDOM.render(<RootComponent />, mount)
   }
   else {
     throw new Exception('No suitable div to mount within found')
