@@ -15,6 +15,8 @@ djangorestframework = "*"
 "django-debug-toolbar" = "*"
 "bs4" = "*"
 markdown = "*"
+pytest = "*"
+"pytest-django" = "*"
 
 
 [dev-packages]
