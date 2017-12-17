@@ -1,4 +1,4 @@
-# django-single-page-template
+# {{ cookiecutter.project_name }}
 
 Install python
 

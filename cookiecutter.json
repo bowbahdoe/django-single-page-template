@@ -1,0 +1,11 @@
+{
+  "project_name": "my_awesome_project",
+  "_copy_without_render": [
+       "*.html",
+       "*.json",
+       "*templates",
+       "Pipfile",
+       "Pipfile.lock",
+       ".babelrc"
+   ]
+}
