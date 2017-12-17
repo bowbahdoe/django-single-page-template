@@ -1,4 +1,4 @@
-"""mysite URL Configuration"""
+"""{{ cookiecutter.project_name }} URL Configuration"""
 
 from django.conf.urls import include, url
 from django.conf import settings
